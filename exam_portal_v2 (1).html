@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IES Valle Verde · English Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#4a3f35;--navy-m:#5c5044;--navy-l:#7a6e62;
+  --mauve:#8b7355;--mauve-l:#c4a882;--mauve-bg:#faf5ee;
+  --cream:#f7f3ed;--white:#fffdf9;
+  --text:#2c2416;--text-m:#4a3f35;--text-l:#8c7d6e;
+  --border:#e4d8c8;
+  --green:#3a7d6a;--green-bg:#eef7f4;
+  --red:#b05470;--red-bg:#fdf0f3;
+  --amber:#7a5c35;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;line-height:1.6}
+
+/* ── VIEWS ── */
+.view{display:none;min-height:100vh}
+.view.active{display:flex;flex-direction:column}
+
+/* ══════════════════════════════
+   LOGIN
+══════════════════════════════ */
+#view-login{
+  background:linear-gradient(160deg,#f0e8dc 0%,#e8d8c4 50%,#ddc8a8 100%);
+  align-items:center;justify-content:center;padding:24px;
+}
+.login-card{
+  background:var(--white);border-radius:14px;max-width:420px;width:100%;
+  overflow:hidden;box-shadow:0 24px 60px rgba(80,60,40,.18);
+}
+.login-top{
+  background:linear-gradient(135deg,#4a3f35,#6b5044);
+  padding:32px 36px 24px;text-align:center;
+  border-bottom:2px solid var(--mauve-l);
+}
+.school{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--mauve-l);margin-bottom:4px}
+.exam-sub{color:rgba(255,255,255,.45);font-size:.76rem;letter-spacing:2.5px;text-transform:uppercase}
+.login-body{padding:28px 34px 32px}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.role-tab{border:2px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;background:var(--white)}
+.role-tab:hover{border-color:var(--navy-l);background:#f2ebe0}
+.role-tab.active{border-color:var(--mauve);background:#4a3f35;color:#f5ede0}
+.role-tab .ico{font-size:1.5rem;display:block;margin-bottom:5px}
+.role-tab .lbl{font-size:.82rem;font-weight:600}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.67rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-l);margin-bottom:5px}
+.fg input{width:100%;border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.94rem;background:var(--white);color:var(--text);transition:border-color .2s,box-shadow .2s}
+.fg input:focus{outline:none;border-color:var(--navy-l);box-shadow:0 0 0 3px rgba(107,140,175,.15)}
+.hint{padding:10px 14px;background:#f5ede0;border:1px solid #d4b898;border-radius:8px;font-size:.77rem;color:var(--amber);line-height:1.5}
+.err-msg{color:var(--red);font-size:.8rem;margin-top:8px;display:none;padding:8px 12px;background:var(--red-bg);border-radius:6px;border-left:3px solid var(--red)}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--navy),var(--navy-m));color:#f5ede0;border:none;border-radius:8px;padding:13px;font-family:'Playfair Display',serif;font-size:.98rem;font-weight:700;cursor:pointer;margin-top:16px;transition:all .2s;letter-spacing:.5px;box-shadow:0 4px 14px rgba(61,90,128,.3)}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(61,90,128,.4)}
+
+/* ══════════════════════════════
+   EXAM — STEP BY STEP
+══════════════════════════════ */
+#view-exam{background:var(--cream)}
+
+.exam-topbar{
+  background:linear-gradient(135deg,var(--navy),var(--navy-m));
+  color:white;padding:14px 24px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:2px solid var(--mauve-l);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 16px rgba(61,90,128,.25);
+  flex-shrink:0;
+}
+.topbar-left h1{font-family:'Playfair Display',serif;font-size:1rem;color:var(--mauve-l)}
+.topbar-left .meta{font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.step-counter{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:5px 14px;border-radius:20px;font-size:.78rem;color:rgba(255,255,255,.85)}
+.step-counter strong{color:var(--mauve-l)}
+.exit-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.6);padding:6px 13px;border-radius:6px;font-size:.75rem;cursor:pointer;transition:all .2s}
+.exit-btn:hover{background:rgba(255,255,255,.15);color:white}
+
+/* progress bar */
+.progress-wrap{height:5px;background:rgba(255,255,255,.15);flex-shrink:0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--mauve-l),#a8906a);transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* section label strip */
+.section-strip{
+  background:#f2e8d8;border-bottom:1px solid var(--border);
+  padding:7px 28px;font-size:.68rem;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--amber);
+  display:flex;align-items:center;gap:8px;
+}
+.section-strip .pts-chip{background:var(--mauve);color:white;padding:2px 10px;border-radius:12px;font-size:.62rem;letter-spacing:1px}
+
+/* step content area */
+.step-area{flex:1;overflow-y:auto;padding:28px 24px 120px}
+.step-inner{max-width:740px;margin:0 auto}
+
+/* step card */
+.step-card{
+  background:var(--white);border:1px solid var(--border);border-radius:12px;
+  padding:28px 28px 24px;
+  box-shadow:0 2px 16px rgba(61,90,128,.07);
+  animation:fadeUp .35s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--navy);margin-bottom:6px}
+.step-inst{font-size:.85rem;color:var(--text-l);font-style:italic;margin-bottom:18px;padding:9px 14px;background:#f5ede0;border-left:3px solid var(--mauve-l);border-radius:0 6px 6px 0}
+
+.wbox{background:#f5ede0;border:1px dashed var(--mauve-l);padding:8px 14px;border-radius:6px;margin-bottom:18px;font-size:.8rem;color:var(--navy);line-height:2}
+.wbox .wbl{display:block;font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:3px}
+
+/* question rows */
+.q-row{margin-bottom:13px}
+.q-line{font-size:.9rem;color:var(--text-m);line-height:2.1;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.qn{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);min-width:20px;font-size:.88rem}
+.blank{border:none;border-bottom:2px solid #c8c0d4;background:transparent;padding:3px 8px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);transition:border-color .2s;border-radius:2px 2px 0 0;width:150px}
+.blank.sm{width:68px}.blank.md{width:115px}.blank.xl{width:200px}.blank.ord{width:50px;text-align:center}
+.blank:focus{outline:none;border-bottom-color:var(--navy-l);background:rgba(107,140,175,.05)}
+.blank.ok{border-bottom-color:var(--green);background:var(--green-bg);color:var(--green)}
+.blank.err{border-bottom-color:var(--red);background:var(--red-bg);color:var(--red)}
+select.ch{border:2px solid var(--border);border-radius:6px;padding:5px 10px;font-family:'DM Sans',sans-serif;font-size:.88rem;background:white;color:var(--text);cursor:pointer;transition:border-color .2s}
+select.ch:focus{outline:none;border-color:var(--navy-l)}
+select.ch.ok{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+select.ch.err{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.q-fb{font-size:.76rem;margin-top:3px;padding:4px 10px;border-radius:4px;display:none;font-weight:600}
+.q-fb.show{display:inline-block}
+.q-fb.ok{background:var(--green-bg);color:var(--green)}
+.q-fb.err{background:var(--red-bg);color:var(--red)}
+
+/* T/F */
+.tf-group{display:flex;gap:10px;margin:8px 0}
+.tf-lbl{display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;font-size:.86rem;padding:7px 16px;border:2px solid var(--border);border-radius:8px;transition:all .15s;user-select:none}
+.tf-lbl:hover{border-color:var(--navy-l);background:#f2ebe0}
+.tf-lbl input{accent-color:var(--navy);cursor:pointer}
+
+/* Reading passage */
+.passage{background:#faf5ee;border:1px solid var(--border);border-top:3px solid var(--navy-l);border-radius:8px;padding:20px 24px;font-size:.88rem;line-height:1.9;color:var(--text-m)}
+.passage h4{font-family:'Playfair Display',serif;font-size:1.12rem;color:var(--navy);text-align:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.passage p{margin-bottom:10px}
+
+/* MCQ */
+.mcq-opts{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.mcq-opt{display:flex;align-items:flex-start;gap:12px;border:2px solid var(--border);border-radius:9px;padding:11px 15px;cursor:pointer;transition:all .16s;background:var(--white);font-size:.88rem;line-height:1.5}
+.mcq-opt:hover{border-color:var(--navy-l);background:#f2ebe0}
+.mcq-opt.sel{border-color:var(--navy-l);background:rgba(138,115,85,.07)}
+.mcq-opt.ok{border-color:var(--green);background:var(--green-bg);color:var(--green);cursor:default}
+.mcq-opt.err{border-color:var(--red);background:var(--red-bg);color:var(--red);cursor:default}
+.mcq-opt.show-ok{border-color:var(--green);background:var(--green-bg);color:var(--green);cursor:default}
+.mcq-lbl{width:24px;height:24px;min-width:24px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.76rem;flex-shrink:0;transition:all .15s}
+.mcq-opt.sel .mcq-lbl{background:var(--navy);border-color:var(--navy);color:white}
+.mcq-opt.ok .mcq-lbl,.mcq-opt.show-ok .mcq-lbl{background:var(--green);border-color:var(--green);color:white}
+.mcq-opt.err .mcq-lbl{background:var(--red);border-color:var(--red);color:white}
+.mcq-q{margin-bottom:20px}
+.mcq-q-text{font-size:.9rem;font-weight:600;color:var(--text-m);margin-bottom:8px;display:flex;gap:8px;align-items:flex-start}
+.mcq-q-num{color:var(--navy);font-family:'Playfair Display',serif;min-width:22px;font-size:.9rem;flex-shrink:0}
+
+/* ordering */
+.ord-rows{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.ord-row{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--text-m);background:var(--white);border:1px solid var(--border);border-radius:8px;padding:10px 14px;transition:border-color .2s}
+.ord-row:focus-within{border-color:var(--navy-l)}
+.ord-row strong{color:var(--navy);font-family:'Playfair Display',serif}
+.ord-row .blank.ok{border-bottom-color:var(--green);background:var(--green-bg);color:var(--green)}
+.ord-row .blank.err{border-bottom-color:var(--red);background:var(--red-bg);color:var(--red)}
+
+/* ── NAV FOOTER ── */
+.exam-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--white);border-top:1px solid var(--border);
+  padding:14px 28px;display:flex;justify-content:space-between;align-items:center;
+  box-shadow:0 -4px 20px rgba(61,90,128,.1);z-index:99;
+}
+.nav-btn{display:flex;align-items:center;gap:7px;padding:11px 22px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.nav-prev{background:var(--mauve-bg);color:var(--amber);border:1px solid var(--mauve-l)}
+.nav-prev:hover{background:#ede3d2}
+.nav-prev:disabled{opacity:.35;cursor:not-allowed}
+.nav-next{background:linear-gradient(135deg,var(--navy),var(--navy-m));color:#f5ede0;box-shadow:0 4px 14px rgba(61,90,128,.3)}
+.nav-next:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(61,90,128,.4)}
+.nav-submit{background:linear-gradient(135deg,var(--mauve),#a8906a);color:#fffdf9;box-shadow:0 4px 14px rgba(155,127,166,.35)}
+.nav-submit:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(155,127,166,.45)}
+.nav-dots{display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .3s}
+.dot.done{background:var(--mauve-l)}
+.dot.active{width:20px;border-radius:4px;background:var(--navy)}
+
+/* ══════════════════════════════
+   RESULTS VIEW
+══════════════════════════════ */
+#view-results{background:var(--cream)}
+.res-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-m));color:white;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--mauve-l);flex-shrink:0}
+.res-hdr h1{font-family:'Playfair Display',serif;font-size:1rem;color:var(--mauve-l)}
+#view-results main{max-width:700px;margin:0 auto;padding:28px 20px 60px;flex:1}
+
+.score-hero{
+  background:linear-gradient(135deg,var(--navy),var(--navy-m));
+  border-radius:14px;overflow:hidden;margin-bottom:22px;
+  box-shadow:0 8px 32px rgba(61,90,128,.2);
+}
+.score-hero-top{padding:36px 28px;text-align:center;border-bottom:2px solid var(--mauve-l)}
+.score-big{font-family:'Playfair Display',serif;font-size:4.2rem;color:var(--mauve-l);line-height:1}
+.score-out{font-size:.78rem;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.score-pct{display:inline-block;margin-top:10px;padding:5px 18px;border-radius:20px;font-size:.82rem;font-weight:700;letter-spacing:.5px}
+.score-pct.A{background:rgba(58,125,106,.25);color:#5ac4a8}
+.score-pct.B{background:rgba(90,110,80,.25);color:#a8c48a}
+.score-pct.C{background:rgba(196,168,130,.35);color:#dfc090}
+.score-pct.D{background:rgba(176,84,112,.3);color:#f0a0b8}
+.score-hero-stats{padding:18px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hs-item{text-align:center}
+.hs-item .v{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--mauve-l)}
+.hs-item .l{font-size:.64rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:1px}
+
+.res-section{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.res-sec-hdr{background:#f5ede0;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.res-sec-hdr h3{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-l)}
+.res-sec-pts{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--navy)}
+.res-sec-pts.hi{color:var(--green)}.res-sec-pts.lo{color:var(--red)}
+.res-items{padding:12px 18px;display:flex;flex-direction:column;gap:6px}
+.res-item{display:flex;align-items:flex-start;gap:10px;font-size:.84rem;padding:6px 10px;border-radius:6px}
+.res-item.ok{background:var(--green-bg)}
+.res-item.err{background:var(--red-bg)}
+.res-item .ri-n{font-weight:700;min-width:20px;font-size:.78rem;color:var(--text-l)}
+.res-item .ri-ans{flex:1;color:var(--text-m)}
+.res-item.ok .ri-ans{color:var(--green)}
+.res-item.err .ri-ans{color:var(--red)}
+.ri-correct{font-size:.76rem;color:var(--green);margin-left:6px}
+.ri-icon{font-size:.9rem;flex-shrink:0}
+
+
+
+@media(max-width:600px){.stat-grid{grid-template-columns:1fr 1fr}.login-body,.login-top{padding:20px 22px}.exam-nav{padding:10px 16px}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="view-login" class="view active">
+  <div class="login-card">
+    <div class="login-top">
+      <div class="school">IES Valle Verde</div>
+      <div class="exam-sub">English · 4º ESO · Final Exam</div>
+    </div>
+    <div class="login-body">
+      <div class="fg"><label>Código de alumno</label><input type="text" id="stu-code" placeholder="Ej: ALU001" autocomplete="off" spellcheck="false"></div>
+      <div class="hint">💡 Introduce el código que te ha asignado tu profesora.</div>
+      <div class="err-msg" id="stu-err"></div>
+      <button class="login-btn" onclick="loginStudent()">Comenzar examen →</button>
+      <div style="text-align:center;margin-top:14px"><button onclick="showView('view-teacher-login')" style="background:none;border:none;color:var(--text-l);font-size:.75rem;cursor:pointer;text-decoration:underline">Acceso profesora</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EXAM ══════════════ -->
+<div id="view-exam" class="view">
+  <div class="exam-topbar">
+    <div class="topbar-left">
+      <h1>IES Valle Verde · English Exam</h1>
+      <div class="meta" id="exam-code-label">Código: —</div>
+    </div>
+    <div class="topbar-right">
+      <div class="step-counter">Sección <strong id="step-n">1</strong> de <strong id="step-total">14</strong></div>
+      <button class="exit-btn" onclick="goLogin()">Salir</button>
+    </div>
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="section-strip" id="section-strip">
+    <span id="section-name">Grammar</span>
+    <span class="pts-chip" id="section-pts">5 pts</span>
+  </div>
+
+  <div class="step-area">
+    <div class="step-inner" id="step-container">
+      <!-- Steps injected by JS -->
+    </div>
+  </div>
+
+  <nav class="exam-nav">
+    <button class="nav-btn nav-prev" id="btn-prev" onclick="prevStep()">← Anterior</button>
+    <div class="nav-dots" id="nav-dots"></div>
+    <button class="nav-btn nav-next" id="btn-next" onclick="nextStep()">Siguiente →</button>
+  </nav>
+</div>
+
+<!-- ══════════════ RESULTS ══════════════ -->
+<div id="view-results" class="view">
+  <div class="res-hdr">
+    <div><h1>Mis Resultados · IES Valle Verde</h1></div>
+    <button class="exit-btn" onclick="goLogin()">Salir</button>
+  </div>
+  <div style="background:#3a7d6a;border-bottom:2px solid #c4a882;padding:12px 24px;text-align:center;">
+    <div style="color:#eef7f4;font-size:.85rem;">
+      ✅ <strong>Resultados enviados automáticamente a la profesora.</strong>
+    </div>
+  </div>
+  <main>
+    <div class="score-hero">
+      <div class="score-hero-top">
+        <div class="score-big" id="rh-total">—</div>
+        <div class="score-out">puntos sobre 75</div>
+        <div class="score-pct" id="rh-grade">—</div>
+      </div>
+      <div class="score-hero-stats">
+        <div class="hs-item"><div class="v" id="rh-gram">—</div><div class="l">Gramática /30</div></div>
+        <div class="hs-item"><div class="v" id="rh-voc">—</div><div class="l">Vocabulario /20</div></div>
+        <div class="hs-item"><div class="v" id="rh-read">—</div><div class="l">Reading /25</div></div>
+      </div>
+    </div>
+    <div id="res-sections-container"></div>
+  </main>
+</div>
+
+<!-- ══════════════ TEACHER DASHBOARD ══════════════ -->
+
+<script>
+// ═══ NO SERVER STORAGE NEEDED ═══
+// Results are downloaded as a file by the student and uploaded by the teacher
+
+// ═══ VIEWS ═══
+function showView(id) {
+  document.querySelectorAll('.view').forEach(function(v) {
+    v.classList.remove('active');
+    v.style.display = 'none';
+  });
+  var el = document.getElementById(id);
+  el.style.display = 'flex';
+  el.classList.add('active');
+  window.scrollTo({top: 0});
+}
+function goLogin() {
+  studentCode = null;
+  showView('view-login');
+}
+
+// ═══ CONFIG GOOGLE SHEETS ═══
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxSN54hVzDWh8J5Ix6A8xyfCVMTprstZ3vg8LMSP10oSVYoMhR9SYOOeKP77KX0ajYMwg/exec';
+
+// ═══ LOGIN ═══
+var studentCode = null;
+function loginStudent() {
+  var code = document.getElementById('stu-code').value.trim().toUpperCase();
+  var err  = document.getElementById('stu-err');
+  if (!code) { err.textContent = 'Introduce tu código de alumno.'; err.style.display = 'block'; return; }
+
+  // Comprobar localStorage por si ya lo hizo en este navegador
+  if (localStorage.getItem('exam_done_' + code) === '1') {
+    err.textContent = 'Este código ya ha realizado el examen. Contacta con tu profesora si hay un error.';
+    err.style.display = 'block';
+    return;
+  }
+
+  err.style.display = 'none';
+  var btn = document.querySelector('.login-btn');
+  btn.textContent = 'Verificando...';
+  btn.disabled = true;
+
+  // Comprobar también en Google Sheets (por si lo hizo en otro ordenador)
+  fetch(SHEETS_URL + '?check=' + encodeURIComponent(code))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data.done) {
+        err.textContent = 'Este código ya ha realizado el examen. Contacta con tu profesora si hay un error.';
+        err.style.display = 'block';
+        btn.textContent = 'Comenzar examen →';
+        btn.disabled = false;
+      } else {
+        studentCode = code;
+        document.getElementById('exam-code-label').textContent = 'Código: ' + code;
+        initExam();
+        showView('view-exam');
+        btn.textContent = 'Comenzar examen →';
+        btn.disabled = false;
+      }
+    })
+    .catch(function(){
+      // Si falla la conexión, dejar pasar (no bloquear al alumno por error de red)
+      studentCode = code;
+      document.getElementById('exam-code-label').textContent = 'Código: ' + code;
+      initExam();
+      showView('view-exam');
+      btn.textContent = 'Comenzar examen →';
+      btn.disabled = false;
+    });
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('view-login').classList.contains('active')) {
+    loginStudent();
+  }
+});
+
+// ═══ ANSWER KEYS ═══
+function norm(s) { return (s || '').trim().toLowerCase().replace(/\s+/g, ' '); }
+
+var AK = {
+  e1_1:{ok:['are becoming'],pts:1},
+  e1_2:{ok:['are you doing'],pts:1},
+  e1_3:{split:['e1_3a','e1_3b'],ok:[['have'],['known']],pts:1},
+  e1_4:{ok:['use'],pts:1},
+  e1_5:{ok:['have already eaten',"'ve already eaten"],pts:1},
+  e2_1:{ok:['was having'],pts:1},
+  e2_2:{ok:['arrived'],pts:1},
+  e2_3:{ok:['had just finished'],pts:1},
+  e2_4:{ok:['watched'],pts:1},
+  e2_5:{ok:['was listening'],pts:1},
+  e3_1:{split:['e3_1a','e3_1b'],ok:[['are'],['doing']],pts:1},
+  e3_2:{ok:['might go'],pts:1},
+  e3_3:{ok:['will have',"'ll have"],pts:1},
+  e3_4:{ok:['is going to buy'],pts:1},
+  e3_5:{split:['e3_5a','e3_5b'],ok:[['are'],['meeting']],pts:1},
+  e4_1:{ok:['someone'],pts:0.5},
+  e4_2:{ok:['who'],pts:0.5},
+  e4_3:{ok:['surfing'],pts:0.5},
+  e4_4:{ok:['when'],pts:0.5},
+  e4_5:{ok:['talking'],pts:0.5},
+  e4_6:{ok:['anyone'],pts:0.5},
+  e4_7:{ok:['nothing'],pts:0.5},
+  e4_8:{ok:['to buy','buying'],pts:0.5},
+  e4_9:{ok:['which'],pts:0.5},
+  e4_10:{ok:['anything'],pts:0.5},
+  e5_1:{ok:['lend'],pts:1},
+  e5_2:{ok:["would finish","'d finish"],pts:1},
+  e5_3:{ok:['were','was'],pts:1},
+  e5_4:{ok:["would have passed","'d have passed"],pts:1},
+  e5_5:{ok:["had seen","'d seen"],pts:1},
+  e6_1:{ok:['is held'],pts:1},
+  e6_2:{split:['e6_2a','e6_2b'],ok:[['was'],['played']],pts:1},
+  e6_3:{ok:['are made'],pts:1},
+  e6_4:{ok:['were made'],pts:1},
+  e6_5:{ok:['will be filmed'],pts:1},
+  e7_1:{ok:['looking forward to'],pts:1},
+  e7_2:{ok:['listening to'],pts:1},
+  e7_3:{ok:['bookshop'],pts:1},
+  e7_4:{ok:['school holiday'],pts:1},
+  e7_5:{ok:['replace'],pts:1},
+  e7_6:{ok:['overcooked'],pts:1},
+  e7_7:{ok:['formal'],pts:1},
+  e7_8:{ok:['casual'],pts:1},
+  e7_9:{ok:['applied'],pts:1},
+  e8_1:{ok:['prison','jail'],pts:1},
+  e8_2:{ok:['set','broke'],pts:1},
+  e8_3:{ok:['friends'],pts:1},
+  e8_4:{ok:['message'],pts:1},
+  e8_5:{ok:['ride','cycle'],pts:1},
+  e8_6:{ok:['comfortable','sporty','loose'],pts:1},
+  e9_1:{ok:['won'],pts:1},
+  e9_2:{ok:['plays'],pts:1},
+  e9_3:{ok:['coached'],pts:1},
+  e9_4:{ok:['recipe'],pts:1},
+  e9_5:{ok:['get into'],pts:1}
+};
+var TF_ANS  = {tf1:'T', tf2:'F', tf3:'F'};
+var ORD_ANS = {ord_A:4, ord_B:3, ord_C:1, ord_D:5, ord_E:2};
+var MCQ_OK  = {r1:1, r2_1:1, r2_2:1, r2_3:2, r2_4:1, r2_5:1, r2_6:2};
+var MCQ_PTS = {r1:2, r2_1:2, r2_2:2, r2_3:2, r2_4:2, r2_5:2, r2_6:2};
+
+var CORR = {
+  e1_1:'are becoming', e1_2:'are you doing', e1_3a:'have', e1_3b:'known',
+  e1_4:'use', e1_5:'have already eaten',
+  e2_1:'was having', e2_2:'arrived', e2_3:'had just finished', e2_4:'watched', e2_5:'was listening',
+  e3_1a:'are', e3_1b:'doing', e3_2:'might go', e3_3:"will have", e3_4:'is going to buy',
+  e3_5a:'are', e3_5b:'meeting',
+  e4_1:'someone', e4_2:'who', e4_3:'surfing', e4_4:'when', e4_5:'talking',
+  e4_6:'anyone', e4_7:'nothing', e4_8:'to buy/buying', e4_9:'which', e4_10:'anything',
+  e5_1:'lend', e5_2:'would finish', e5_3:'were/was', e5_4:'would have passed', e5_5:'had seen',
+  e6_1:'is held', e6_2a:'was', e6_2b:'played', e6_3:'are made', e6_4:'were made', e6_5:'will be filmed',
+  e7_1:'looking forward to', e7_2:'listening to', e7_3:'bookshop', e7_4:'school holiday',
+  e7_5:'replace', e7_6:'overcooked', e7_7:'formal', e7_8:'casual', e7_9:'applied',
+  e8_1:'prison/jail', e8_2:'set/broke', e8_3:'friends', e8_4:'message',
+  e8_5:'ride/cycle', e8_6:'comfortable/sporty',
+  e9_1:'won', e9_2:'plays', e9_3:'coached', e9_4:'recipe', e9_5:'get into'
+};
+var MCQ_TEXT = {
+  r1:['Durante la competición','Un año antes, paquete de su madre','Vio anuncio en TV'],
+  r2_1:['El paquete se pierde','Extra tiempo y coste de reentrega','El cliente lo recoge'],
+  r2_2:['Una cámara','Conexión al móvil del propietario','Cerradura inteligente'],
+  r2_3:['En su habitación','Laboratorio universitario',"Competición escolar Dragon's Den"],
+  r2_4:['Su madre','Paula Ward, amiga inventora','Su profesor'],
+  r2_5:['£25,000','£250,000','£2,500,000'],
+  r2_6:['Reinvertirlo todo','Donarlo a charity','Universidad + juegos y ropa']
+};
+
+// ═══ STEPS ═══
+var STEPS = [
+  {id:'ex1', section:'Grammar', pts:'5 pts', title:'1. Present Tenses',
+   inst:'Complete with <strong>present simple, present continuous or present perfect</strong>.',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> At the present time, social networking sites <input class="blank xl" id="e1_1" placeholder="..."> (become) more popular.</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> What <input class="blank xl" id="e1_2" placeholder="..."> at the moment? (you do)</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> How long <input class="blank sm" id="e1_3a" placeholder="..."> you <input class="blank md" id="e1_3b" placeholder="..."> (know) her?</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> More than a billion people <input class="blank" id="e1_4" placeholder="..."> (use) the internet every day.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> I\'m not hungry, I <input class="blank xl" id="e1_5" placeholder="..."> (already eat) lunch.</div></div>'},
+  {id:'ex2', section:'Grammar', pts:'5 pts', title:'2. Past Tenses',
+   inst:'Complete with <strong>past simple, past continuous or past perfect</strong> from the box.',
+   wordbox:'arrive &nbsp;·&nbsp; listen &nbsp;·&nbsp; have &nbsp;·&nbsp; watch &nbsp;·&nbsp; just finish',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> What were you doing at 7pm? I <input class="blank xl" id="e2_1" placeholder="..."> dinner with my parents.</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> When we <input class="blank" id="e2_2" placeholder="..."> to the stadium, our friends were waiting.</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> We wanted to watch a film on TV but it <input class="blank xl" id="e2_3" placeholder="..."></div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> I hadn\'t seen horror films before I <input class="blank" id="e2_4" placeholder="..."> this one.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> I <input class="blank xl" id="e2_5" placeholder="..."> to an audio book when my friends arrived.</div></div>'},
+  {id:'ex3', section:'Grammar', pts:'5 pts', title:'3. Future Forms',
+   inst:'Complete using <strong>might / will / present continuous / be going to</strong>.',
+   wordbox:'have &nbsp;·&nbsp; meet &nbsp;·&nbsp; buy &nbsp;·&nbsp; do &nbsp;·&nbsp; go',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> What <input class="blank sm" id="e3_1a" placeholder="..."> you <input class="blank md" id="e3_1b" placeholder="..."> on Saturday?</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> I\'m not sure but I <input class="blank xl" id="e3_2" placeholder="..."> to the beach.</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> I\'m not thirsty so I think I <input class="blank xl" id="e3_3" placeholder="..."> a small coffee.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> My uncle <input class="blank xl" id="e3_4" placeholder="..."> a new car next month.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> What time <input class="blank sm" id="e3_5a" placeholder="..."> you <input class="blank md" id="e3_5b" placeholder="..."> your friends this evening?</div></div>'},
+  {id:'ex4', section:'Grammar', pts:'5 pts', title:'4. Fill in the Gaps',
+   inst:'Fill in the gaps. Some words need to be modified.',
+   wordbox:'anything &nbsp;·&nbsp; surf &nbsp;·&nbsp; which &nbsp;·&nbsp; buy &nbsp;·&nbsp; anyone &nbsp;·&nbsp; who &nbsp;·&nbsp; someone &nbsp;·&nbsp; nothing &nbsp;·&nbsp; when &nbsp;·&nbsp; talk',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> I think there\'s <input class="blank" id="e4_1" placeholder="..."> at the door.</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> Did you give police a description of the man <input class="blank" id="e4_2" placeholder="..."> stole your wallet?</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> We spend a lot of time <input class="blank" id="e4_3" placeholder="..."> the internet.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> Do you remember the time <input class="blank" id="e4_4" placeholder="..."> we all went to the beach?</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> She really enjoys <input class="blank" id="e4_5" placeholder="..."> to her friends on the phone.</div></div><div class="q-row"><div class="q-line"><span class="qn">6</span> Do you know <input class="blank" id="e4_6" placeholder="..."> who takes dance lessons?</div></div><div class="q-row"><div class="q-line"><span class="qn">7</span> There\'s <input class="blank" id="e4_7" placeholder="..."> good on TV tonight.</div></div><div class="q-row"><div class="q-line"><span class="qn">8</span> They can\'t afford <input class="blank md" id="e4_8" placeholder="..."> a new car.</div></div><div class="q-row"><div class="q-line"><span class="qn">9</span> Can you show me the photos <input class="blank" id="e4_9" placeholder="..."> you took at the party?</div></div><div class="q-row"><div class="q-line"><span class="qn">10</span> She can\'t find <input class="blank" id="e4_10" placeholder="..."> nice to wear.</div></div>'},
+  {id:'ex5', section:'Grammar', pts:'5 pts', title:'5. Conditional Sentences',
+   inst:'Complete the conditional sentences with the correct form of the verbs in brackets.',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> If you <input class="blank" id="e5_1" placeholder="..."> (lend) me money, I\'ll pay you back tomorrow.</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> If I had more time, I <input class="blank xl" id="e5_2" placeholder="..."> (finish) this job today.</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> If I <input class="blank" id="e5_3" placeholder="..."> (be) rich, I would travel around the world.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> If he had worked harder, he <input class="blank xl" id="e5_4" placeholder="..."> (pass) the exam.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> If we <input class="blank xl" id="e5_5" placeholder="..."> (see) the thief, we would have told the police.</div></div>'},
+  {id:'ex6', section:'Grammar', pts:'5 pts', title:'6. Passive Voice',
+   inst:'Complete with the correct <strong>passive form</strong> of the verbs in brackets.',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> The World Cup <input class="blank xl" id="e6_1" placeholder="..."> (hold) every four years.</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> Where <input class="blank sm" id="e6_2a" placeholder="..."> the last World Cup Final <input class="blank md" id="e6_2b" placeholder="..."> (play)?</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> Mercedes cars <input class="blank xl" id="e6_3" placeholder="..."> (make) in Germany.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> Thirty years ago footballs <input class="blank xl" id="e6_4" placeholder="..."> (make) of leather.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> The next James Bond film <input class="blank xl" id="e6_5" placeholder="..."> (film) next summer in London.</div></div>'},
+  {id:'ex7', section:'Vocabulary', pts:'9 pts', title:'7. Complete from Box',
+   inst:'Complete the sentences. Two extra words you do not need.',
+   wordbox:'school holiday &nbsp;·&nbsp; casual &nbsp;·&nbsp; looking forward to &nbsp;·&nbsp; overcooked &nbsp;·&nbsp; replace &nbsp;·&nbsp; formal &nbsp;·&nbsp; applied &nbsp;·&nbsp; listening to &nbsp;·&nbsp; bookshop &nbsp;·&nbsp; colourful',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> My brother is really <input class="blank xl" id="e7_1" placeholder="..."> taking a gap year!</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> I like <input class="blank xl" id="e7_2" placeholder="..."> the radio in the evenings.</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> We must use the <input class="blank" id="e7_3" placeholder="..."> in our town or it will close.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> In the next <input class="blank xl" id="e7_4" placeholder="..."> I\'m going to America with my mum.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> If you <input class="blank" id="e7_5" placeholder="..."> your batteries with rechargeable ones, you save money.</div></div><div class="q-row"><div class="q-line"><span class="qn">6</span> I don\'t like <input class="blank" id="e7_6" placeholder="..."> food.</div></div><div class="q-row"><div class="q-line"><span class="qn">7</span> I\'ve got a job interview, so I need to wear something <input class="blank" id="e7_7" placeholder="...">.</div></div><div class="q-row"><div class="q-line"><span class="qn">8</span> You can\'t wear trainers to work, they\'re too <input class="blank" id="e7_8" placeholder="...">.</div></div><div class="q-row"><div class="q-line"><span class="qn">9</span> Mary <input class="blank" id="e7_9" placeholder="..."> for a job as a shop-assistant last week.</div></div>'},
+  {id:'ex8', section:'Vocabulary', pts:'6 pts', title:'8. Complete the Sentences',
+   inst:'Complete the sentences with the correct word.',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> After the trial, the robber went to <input class="blank" id="e8_1" placeholder="..."> for six months.</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> The athlete <input class="blank" id="e8_2" placeholder="..."> a new record in the 100 metres race.</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> John made new <input class="blank" id="e8_3" placeholder="..."> in his new school quickly.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> Did you get a text <input class="blank" id="e8_4" placeholder="..."> from Katy last night?</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> I <input class="blank" id="e8_5" placeholder="..."> a bike to school because it\'s better for the environment.</div></div><div class="q-row"><div class="q-line"><span class="qn">6</span> Max likes clothes which are <input class="blank xl" id="e8_6" placeholder="..."> because he does a lot of exercise.</div></div>'},
+  {id:'ex9', section:'Vocabulary', pts:'5 pts', title:'9. Choose the Correct Word',
+   inst:'Select the correct option for each sentence.',
+   html:'<div class="q-row"><div class="q-line"><span class="qn">1</span> I <select class="ch" id="e9_1"><option value="">—</option><option>won</option><option>beat</option><option>gain</option></select> the race by three seconds!</div></div><div class="q-row"><div class="q-line"><span class="qn">2</span> My brother <select class="ch" id="e9_2"><option value="">—</option><option>practises</option><option>plays</option><option>train</option></select> football once a week.</div></div><div class="q-row"><div class="q-line"><span class="qn">3</span> The swimmers are very fit because they are <select class="ch" id="e9_3"><option value="">—</option><option>coached</option><option>train</option><option>practice</option></select> every day.</div></div><div class="q-row"><div class="q-line"><span class="qn">4</span> I\'ve got a nice <select class="ch" id="e9_4"><option value="">—</option><option>receipt</option><option>recipe</option><option>cook</option></select> for chicken soup.</div></div><div class="q-row"><div class="q-line"><span class="qn">5</span> These jeans are too tight. I can\'t <select class="ch" id="e9_5"><option value="">—</option><option>get into</option><option>go with</option><option>put on</option></select> them.</div></div>'},
+  {id:'reading-txt', section:'Reading', pts:'25 pts', title:'Read the text carefully',
+   inst:'Read the text below carefully. The next screens will ask you questions about it.',
+   html:'<div class="passage"><h4>British boy invents phone-linked doorbell</h4><p>What happens when the postman tries to deliver a parcel and no-one is at home? The postman has to take the parcel away and deliver it the next day, or the day after that. This is often both time consuming and inconvenient, and it costs the postal company a lot of money.</p><p>Well, a 13-year-old school boy has thought of an idea which could solve this problem.</p><p>Laurence Rook, from Croydon, said that he had had the idea a year before when his mum had been expecting a parcel delivery. They had tried to deliver the parcel three times, and each time they had left a note saying they would deliver it again the next day. He thought it would be much easier if the postman could phone you while he was standing outside your house. At that point, he had the idea of setting a phone connection inside the doorbell which connects directly to the owner\'s mobile phone.</p><p>At around the same time, Laurence\'s school had a competition for inventions based on the TV show Dragon\'s Den, which allowed him to develop the concept in more detail. However, he didn\'t have enough time to design a prototype. So, he asked a family friend, Paula Ward, to help him improve the design. Paula is an inventor, and after they had worked out the design and the concept, she contacted some people in the business who built the prototype.</p><p>Laurence has already received orders worth £250,000 from two different companies. Very sensibly, he plans to put some money away for his university fees, but also spend some on games and clothes, and having some fun!</p></div>'},
+  {id:'r-mcq', section:'Reading', pts:'14 pts', title:'Reading – Comprehension',
+   inst:'Choose the best answer for each question.',
+   html:'<div class="mcq-q"><div class="mcq-q-text"><span class="mcq-q-num">Q1.</span> When and why did Laurence get the idea?</div><div id="mcq_r1" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r1\',0)"><div class="mcq-lbl">A</div><span>During the school competition, to win a prize.</span></div><div class="mcq-opt" onclick="selMcq(\'r1\',1)"><div class="mcq-lbl">B</div><span>A year before, when his mum\'s parcel was not delivered three times.</span></div><div class="mcq-opt" onclick="selMcq(\'r1\',2)"><div class="mcq-lbl">C</div><span>When he saw an advertisement for smart doorbells on TV.</span></div></div></div><div class="mcq-q"><div class="mcq-q-text"><span class="mcq-q-num">Q2.1</span> Why is it inconvenient when the postman can\'t deliver a parcel?</div><div id="mcq_r2_1" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r2_1\',0)"><div class="mcq-lbl">A</div><span>The parcel gets lost permanently.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_1\',1)"><div class="mcq-lbl">B</div><span>It takes extra time and costs the postal company money to re-deliver.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_1\',2)"><div class="mcq-lbl">C</div><span>The customer has to collect it at the post office.</span></div></div></div><div class="mcq-q"><div class="mcq-q-text"><span class="mcq-q-num">Q2.2</span> What did Laurence think of putting inside the doorbell?</div><div id="mcq_r2_2" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r2_2\',0)"><div class="mcq-lbl">A</div><span>A small camera to film the postman.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_2\',1)"><div class="mcq-lbl">B</div><span>A phone connection that links directly to the owner\'s mobile.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_2\',2)"><div class="mcq-lbl">C</div><span>A smart lock to open the door remotely.</span></div></div></div><div class="mcq-q"><div class="mcq-q-text"><span class="mcq-q-num">Q2.3</span> Where did he develop the concept?</div><div id="mcq_r2_3" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r2_3\',0)"><div class="mcq-lbl">A</div><span>In his bedroom with his mother\'s help.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_3\',1)"><div class="mcq-lbl">B</div><span>At a university laboratory.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_3\',2)"><div class="mcq-lbl">C</div><span>At a school competition based on Dragon\'s Den.</span></div></div></div><div class="mcq-q"><div class="mcq-q-text"><span class="mcq-q-num">Q2.4</span> Who helped him improve the design?</div><div id="mcq_r2_4" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r2_4\',0)"><div class="mcq-lbl">A</div><span>His mother, who works as an engineer.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_4\',1)"><div class="mcq-lbl">B</div><span>Paula Ward, a family friend and inventor.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_4\',2)"><div class="mcq-lbl">C</div><span>His school teacher who organised the competition.</span></div></div></div><div class="mcq-q"><div class="mcq-q-text"><span class="mcq-q-num">Q2.5</span> How much are the initial orders worth?</div><div id="mcq_r2_5" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r2_5\',0)"><div class="mcq-lbl">A</div><span>£25,000 from one company.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_5\',1)"><div class="mcq-lbl">B</div><span>£250,000 from two different companies.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_5\',2)"><div class="mcq-lbl">C</div><span>£2,500,000 from a large international company.</span></div></div></div><div class="mcq-q" style="margin-bottom:0"><div class="mcq-q-text"><span class="mcq-q-num">Q2.6</span> What will Laurence do with the money?</div><div id="mcq_r2_6" class="mcq-opts"><div class="mcq-opt" onclick="selMcq(\'r2_6\',0)"><div class="mcq-lbl">A</div><span>Invest it all to develop a second invention.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_6\',1)"><div class="mcq-lbl">B</div><span>Donate it to charity and save the rest.</span></div><div class="mcq-opt" onclick="selMcq(\'r2_6\',2)"><div class="mcq-lbl">C</div><span>Save some for university and spend some on games, clothes and fun.</span></div></div></div>'},
+  {id:'r-tf', section:'Reading', pts:'6 pts', title:'3. True or False',
+   inst:'Say if the following sentences are <strong>True (T)</strong> or <strong>False (F)</strong>.',
+   html:'<div class="q-row" style="margin-bottom:14px"><div class="q-line" style="font-weight:600;margin-bottom:8px"><span class="qn">1</span> Postal companies lose money when they cannot deliver a parcel on the established day.</div><div class="tf-group"><label class="tf-lbl"><input type="radio" name="tf1" value="T"> TRUE</label><label class="tf-lbl"><input type="radio" name="tf1" value="F"> FALSE</label></div></div><div class="q-row" style="margin-bottom:14px"><div class="q-line" style="font-weight:600;margin-bottom:8px"><span class="qn">2</span> Laurence Rook had the idea during the school competition for inventions.</div><div class="tf-group"><label class="tf-lbl"><input type="radio" name="tf2" value="T"> TRUE</label><label class="tf-lbl"><input type="radio" name="tf2" value="F"> FALSE</label></div></div><div class="q-row"><div class="q-line" style="font-weight:600;margin-bottom:8px"><span class="qn">3</span> He has decided to save ALL the money from his invention for the future.</div><div class="tf-group"><label class="tf-lbl"><input type="radio" name="tf3" value="T"> TRUE</label><label class="tf-lbl"><input type="radio" name="tf3" value="F"> FALSE</label></div></div>'},
+  {id:'r-ord', section:'Reading', pts:'5 pts', title:'4. Put in Correct Order (1–5)',
+   inst:'Write the number (1–5) for each sentence as it happens in the text.',
+   html:'<div class="ord-rows"><div class="ord-row"><input class="blank ord" id="ord_A" type="number" min="1" max="5" placeholder="#"> <strong>A.</strong> Laurence asks a friend for help to improve his prototype.</div><div class="ord-row"><input class="blank ord" id="ord_B" type="number" min="1" max="5" placeholder="#"> <strong>B.</strong> A school competition on inventions takes place.</div><div class="ord-row"><input class="blank ord" id="ord_C" type="number" min="1" max="5" placeholder="#"> <strong>C.</strong> Laurence\'s mother expects a parcel but nobody is at home.</div><div class="ord-row"><input class="blank ord" id="ord_D" type="number" min="1" max="5" placeholder="#"> <strong>D.</strong> Two companies are interested in his prototype.</div><div class="ord-row"><input class="blank ord" id="ord_E" type="number" min="1" max="5" placeholder="#"> <strong>E.</strong> Laurence thinks of an invention to solve this problem.</div></div>'}
+];
+
+// MCQ answers stored separately (survive DOM changes)
+var mcqAns = {r1:null, r2_1:null, r2_2:null, r2_3:null, r2_4:null, r2_5:null, r2_6:null};
+// All text/select answers saved here
+var allAns = {};
+var currentStep = 0;
+
+// ═══ EXAM ═══
+function initExam() {
+  currentStep = 0;
+  mcqAns = {r1:null, r2_1:null, r2_2:null, r2_3:null, r2_4:null, r2_5:null, r2_6:null};
+  allAns = {};
+  renderStep();
+  renderDots();
+}
+
+function snapshot() {
+  // Save every visible input/select to allAns
+  var inputs = document.querySelectorAll('input.blank, input[type="number"].blank');
+  for (var i = 0; i < inputs.length; i++) {
+    var el = inputs[i];
+    if (el.id) allAns[el.id] = el.value;
+  }
+  var selects = document.querySelectorAll('select.ch');
+  for (var i = 0; i < selects.length; i++) {
+    var el = selects[i];
+    if (el.id) allAns[el.id] = el.value;
+  }
+  var tfNames = ['tf1','tf2','tf3'];
+  for (var i = 0; i < tfNames.length; i++) {
+    var checked = document.querySelector('input[name="' + tfNames[i] + '"]:checked');
+    if (checked) allAns[tfNames[i]] = checked.value;
+  }
+}
+
+function restore() {
+  // Restore text/number inputs
+  var ids = Object.keys(allAns);
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i];
+    var el = document.getElementById(id);
+    if (!el) continue;
+    if (el.tagName === 'SELECT') el.value = allAns[id];
+    else if (el.type !== 'radio') el.value = allAns[id];
+  }
+  // Restore radios
+  var tfNames = ['tf1','tf2','tf3'];
+  for (var i = 0; i < tfNames.length; i++) {
+    var name = tfNames[i];
+    if (allAns[name]) {
+      var r = document.querySelector('input[name="' + name + '"][value="' + allAns[name] + '"]');
+      if (r) r.checked = true;
+    }
+  }
+  // Restore MCQ highlights
+  var keys = Object.keys(mcqAns);
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    if (mcqAns[k] === null) continue;
+    var c = document.getElementById('mcq_' + k);
+    if (!c) continue;
+    var opts = c.querySelectorAll('.mcq-opt');
+    for (var j = 0; j < opts.length; j++) {
+      opts[j].classList.toggle('sel', j === mcqAns[k]);
+    }
+  }
+}
+
+function renderStep() {
+  var s = STEPS[currentStep];
+  document.getElementById('section-name').textContent = s.section;
+  document.getElementById('section-pts').textContent  = s.pts;
+  document.getElementById('step-n').textContent       = currentStep + 1;
+  document.getElementById('step-total').textContent   = STEPS.length;
+  document.getElementById('prog-fill').style.width    = ((currentStep + 1) / STEPS.length * 100) + '%';
+
+  var wb = s.wordbox ? '<div class="wbox"><span class="wbl">Word box</span>' + s.wordbox + '</div>' : '';
+  document.getElementById('step-container').innerHTML =
+    '<div class="step-card"><div class="step-title">' + s.title + '</div>' +
+    '<div class="step-inst">' + s.inst + '</div>' + wb + s.html + '</div>';
+
+  document.getElementById('btn-prev').disabled = (currentStep === 0);
+  var nextBtn = document.getElementById('btn-next');
+  if (currentStep === STEPS.length - 1) {
+    nextBtn.className = 'nav-btn nav-submit';
+    nextBtn.textContent = 'Entregar examen ✓';
+    nextBtn.onclick = doSubmit;
+  } else {
+    nextBtn.className = 'nav-btn nav-next';
+    nextBtn.textContent = 'Siguiente →';
+    nextBtn.onclick = goNext;
+  }
+
+  restore();
+  document.querySelector('.step-area').scrollTop = 0;
+  updateDots();
+}
+
+function renderDots() {
+  var wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  var n = Math.min(STEPS.length, 14);
+  for (var i = 0; i < n; i++) {
+    var d = document.createElement('div');
+    d.className = 'dot'; d.id = 'dot-' + i;
+    wrap.appendChild(d);
+  }
+  updateDots();
+}
+function updateDots() {
+  for (var i = 0; i < STEPS.length; i++) {
+    var d = document.getElementById('dot-' + i);
+    if (!d) continue;
+    d.className = 'dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+  }
+}
+function goNext()  { snapshot(); currentStep++; renderStep(); }
+function prevStep(){ snapshot(); currentStep--; renderStep(); }
+
+function selMcq(key, idx) {
+  mcqAns[key] = idx;
+  var c = document.getElementById('mcq_' + key);
+  if (!c) return;
+  var opts = c.querySelectorAll('.mcq-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.toggle('sel', i === idx);
+}
+
+// ═══ SUBMIT ═══
+function doSubmit() {
+  snapshot();
+
+  // Build final answers object
+  var ans = {};
+  var keys = Object.keys(allAns);
+  for (var i = 0; i < keys.length; i++) ans[keys[i]] = allAns[keys[i]];
+  // MCQ
+  var mkeys = Object.keys(mcqAns);
+  for (var i = 0; i < mkeys.length; i++) ans['mcq_' + mkeys[i]] = mcqAns[mkeys[i]];
+  // Ensure TF present
+  var tfs = ['tf1','tf2','tf3'];
+  for (var i = 0; i < tfs.length; i++) if (!(tfs[i] in ans)) ans[tfs[i]] = '';
+
+  // Grade
+  var scores = grade(ans);
+  var gram  = (scores[1]||0)+(scores[2]||0)+(scores[3]||0)+(scores[4]||0)+(scores[5]||0)+(scores[6]||0);
+  var voc   = (scores[7]||0)+(scores[8]||0)+(scores[9]||0);
+  var read  = (scores.rmcq||0)+(scores.rtf||0)+(scores.rord||0);
+  var total = gram + voc + read;
+  var pct   = Math.round(total / 75 * 100);
+  var nota  = pct>=85?'Sobresaliente':pct>=65?'Notable':pct>=50?'Aprobado':'Insuficiente';
+
+  var sub = {code:studentCode, timestamp:new Date().toISOString(),
+             answers:ans, scores:scores, gram:gram, voc:voc, read:read, total:total};
+
+  var btn = document.getElementById('btn-next');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+
+  // Payload para Google Sheets
+  var payload = {
+    codigo:      studentCode,
+    total:       total,
+    gramatica:   gram,
+    vocabulario: voc,
+    reading:     read,
+    nota:        nota,
+    respuestas:  JSON.stringify(ans)
+  };
+
+  // Enviar via imagen (GET sin CORS, no necesita respuesta)
+  var params = 'action=save&payload=' + encodeURIComponent(JSON.stringify(payload));
+  var img = new Image();
+  img.onload = img.onerror = function() {
+    localStorage.setItem('exam_done_' + studentCode, '1');
+    showResults(sub);
+  };
+  img.src = SHEETS_URL + '?' + params;
+  // Timeout de seguridad
+  setTimeout(function() {
+    localStorage.setItem('exam_done_' + studentCode, '1');
+    showResults(sub);
+  }, 4000);
+}
+
+function grade(ans) {
+  var s = {};
+  s[1] = chkS('e1_1',ans)+chkS('e1_2',ans)+chkSp('e1_3',ans)+chkS('e1_4',ans)+chkS('e1_5',ans);
+  s[2] = chkS('e2_1',ans)+chkS('e2_2',ans)+chkS('e2_3',ans)+chkS('e2_4',ans)+chkS('e2_5',ans);
+  s[3] = chkSp('e3_1',ans)+chkS('e3_2',ans)+chkS('e3_3',ans)+chkS('e3_4',ans)+chkSp('e3_5',ans);
+  s[4]=0; for(var i=1;i<=10;i++) s[4]+=chkS('e4_'+i,ans);
+  s[5]=0; for(var i=1;i<=5;i++)  s[5]+=chkS('e5_'+i,ans);
+  s[6] = chkS('e6_1',ans)+chkSp('e6_2',ans)+chkS('e6_3',ans)+chkS('e6_4',ans)+chkS('e6_5',ans);
+  s[7]=0; for(var i=1;i<=9;i++) s[7]+=chkS('e7_'+i,ans);
+  s[8]=0; for(var i=1;i<=6;i++) s[8]+=chkS('e8_'+i,ans);
+  s[9]=0; for(var i=1;i<=5;i++) s[9]+=chkSel('e9_'+i,ans);
+  // MCQ
+  s.rmcq=0;
+  var mk=['r1','r2_1','r2_2','r2_3','r2_4','r2_5','r2_6'];
+  for(var i=0;i<mk.length;i++){var a=ans['mcq_'+mk[i]];s.rmcq+=(a!==null&&a!==undefined&&a===MCQ_OK[mk[i]])?MCQ_PTS[mk[i]]:0;}
+  // T/F
+  s.rtf=0;
+  var tf=['tf1','tf2','tf3'];
+  for(var i=0;i<tf.length;i++) s.rtf+=(ans[tf[i]]===TF_ANS[tf[i]])?2:0;
+  // Order
+  s.rord=0;
+  var ol=['A','B','C','D','E'];
+  for(var i=0;i<ol.length;i++) s.rord+=(parseInt(ans['ord_'+ol[i]])===ORD_ANS['ord_'+ol[i]])?1:0;
+  return s;
+}
+
+function chkS(key,ans){var info=AK[key];if(!info)return 0;var val=norm(ans[key]||'');for(var i=0;i<info.ok.length;i++)if(norm(info.ok[i])===val)return info.pts;return 0;}
+function chkSp(key,ans){var info=AK[key];if(!info||!info.split)return 0;for(var i=0;i<info.split.length;i++){var id=info.split[i];var val=norm(ans[id]||'');var ok=false;for(var j=0;j<info.ok[i].length;j++)if(norm(info.ok[i][j])===val){ok=true;break;}if(!ok)return 0;}return info.pts;}
+function chkSel(key,ans){var info=AK[key];if(!info)return 0;for(var i=0;i<info.ok.length;i++)if(info.ok[i]===ans[key])return info.pts;return 0;}
+function fmt(v){return(v===undefined||v===null)?'—':(v%1===0?String(v):v.toFixed(1));}
+
+// ═══ SEND RESULT BY EMAIL ═══
+function buildEmailText(sub) {
+  var pct = Math.round(sub.total / 75 * 100);
+  var grade = pct>=85?'Sobresaliente':pct>=65?'Notable':pct>=50?'Aprobado':'Insuficiente';
+  var t = 'EXAMEN ENGLISH 4 ESO - IES VALLE VERDE\n';
+  t += 'Codigo: ' + sub.code + '\n';
+  t += 'Fecha: ' + new Date(sub.timestamp).toLocaleString('es-ES') + '\n';
+  t += 'TOTAL: ' + fmt(sub.total) + '/75 pts (' + pct + '% - ' + grade + ')\n';
+  t += 'Gramatica: ' + fmt(sub.gram) + '/30 | Vocabulario: ' + fmt(sub.voc) + '/20 | Reading: ' + fmt(sub.read) + '/25\n';
+  t += 'Ex1:' + fmt(sub.scores[1]||0) + ' Ex2:' + fmt(sub.scores[2]||0) + ' Ex3:' + fmt(sub.scores[3]||0);
+  t += ' Ex4:' + fmt(sub.scores[4]||0) + ' Ex5:' + fmt(sub.scores[5]||0) + ' Ex6:' + fmt(sub.scores[6]||0) + '\n';
+  t += 'Ex7:' + fmt(sub.scores[7]||0) + ' Ex8:' + fmt(sub.scores[8]||0) + ' Ex9:' + fmt(sub.scores[9]||0);
+  t += ' MCQ:' + fmt(sub.scores.rmcq||0) + ' TF:' + fmt(sub.scores.rtf||0) + ' Ord:' + fmt(sub.scores.rord||0) + '\n';
+  return t;
+}
+
+function sendResultEmail(sub) {
+  var subject = 'Examen English 4ESO - ' + sub.code + ' - ' + fmt(sub.total) + '/75';
+  var body = buildEmailText(sub);
+  var mailto = 'mailto:inmaculada.profesora@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  // Try to open mailto
+  try {
+    window.open(mailto, '_blank');
+  } catch(e) {
+    showEmailFallback(sub);
+  }
+  // Show fallback after short delay in case window.open was blocked
+  setTimeout(function() { showEmailFallback(sub); }, 1500);
+}
+
+function showEmailFallback(sub) {
+  var fb = document.getElementById('email-fallback');
+  if (!fb || fb.style.display !== 'none') return;
+  fb.style.display = 'block';
+  var ta = document.getElementById('email-text');
+  if (ta) ta.value = buildEmailText(sub);
+  // Also set the manual mailto link
+  var subject = 'Examen English 4ESO - ' + sub.code + ' - ' + fmt(sub.total) + '/75';
+  var body = buildEmailText(sub);
+  var ml = document.getElementById('mailto-link');
+  if (ml) ml.href = 'mailto:inmaculada.profesora@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+
+function copyEmailText() {
+  var ta = document.getElementById('email-text');
+  if (!ta) return;
+  ta.select();
+  try {
+    document.execCommand('copy');
+    var btn = document.getElementById('copy-btn');
+    if (btn) { btn.textContent = '✓ Copiado!'; setTimeout(function(){ btn.textContent = '📋 Copiar texto'; }, 2000); }
+  } catch(e) { alert('Selecciona el texto manualmente y cópialo.'); }
+}
+
+// ═══ SHOW RESULTS ═══
+var lastSub = null;
+function resendEmail() {
+  if (!lastSub) return;
+  sendResultEmail(lastSub);
+}
+
+function showResults(sub) {
+  lastSub = sub;
+  var pct = Math.round(sub.total / 75 * 100);
+  var grade = pct>=85?'A':pct>=65?'B':pct>=50?'C':'D';
+  var gLabel = {A:'Sobresaliente',B:'Notable',C:'Aprobado',D:'Insuficiente'}[grade];
+  document.getElementById('rh-total').textContent = fmt(sub.total);
+  document.getElementById('rh-gram').textContent  = fmt(sub.gram);
+  document.getElementById('rh-voc').textContent   = fmt(sub.voc);
+  document.getElementById('rh-read').textContent  = fmt(sub.read);
+  var gp = document.getElementById('rh-grade');
+  gp.textContent = pct + '% — ' + gLabel;
+  gp.className = 'score-pct ' + grade;
+
+  var html = '';
+  // Grammar + Vocab sections
+  var SECS = [
+    {t:'1. Present Tenses',    ex:1, max:5,  ids:[['e1_1'],['e1_2'],['e1_3a','e1_3b'],['e1_4'],['e1_5']]},
+    {t:'2. Past Tenses',       ex:2, max:5,  ids:[['e2_1'],['e2_2'],['e2_3'],['e2_4'],['e2_5']]},
+    {t:'3. Future Forms',      ex:3, max:5,  ids:[['e3_1a','e3_1b'],['e3_2'],['e3_3'],['e3_4'],['e3_5a','e3_5b']]},
+    {t:'4. Fill in the Gaps',  ex:4, max:5,  ids:[['e4_1'],['e4_2'],['e4_3'],['e4_4'],['e4_5'],['e4_6'],['e4_7'],['e4_8'],['e4_9'],['e4_10']]},
+    {t:'5. Conditionals',      ex:5, max:5,  ids:[['e5_1'],['e5_2'],['e5_3'],['e5_4'],['e5_5']]},
+    {t:'6. Passive Voice',     ex:6, max:5,  ids:[['e6_1'],['e6_2a','e6_2b'],['e6_3'],['e6_4'],['e6_5']]},
+    {t:'7. Complete from Box', ex:7, max:9,  ids:[['e7_1'],['e7_2'],['e7_3'],['e7_4'],['e7_5'],['e7_6'],['e7_7'],['e7_8'],['e7_9']]},
+    {t:'8. Complete Sentences',ex:8, max:6,  ids:[['e8_1'],['e8_2'],['e8_3'],['e8_4'],['e8_5'],['e8_6']]},
+    {t:'9. Correct Word',      ex:9, max:5,  ids:[['e9_1'],['e9_2'],['e9_3'],['e9_4'],['e9_5']]}
+  ];
+  for (var si = 0; si < SECS.length; si++) {
+    var sec = SECS[si];
+    var sc  = sub.scores[sec.ex] || 0;
+    var cls = sc/sec.max>=0.8?'hi':sc/sec.max<0.5?'lo':'';
+    var rows = '';
+    for (var ii = 0; ii < sec.ids.length; ii++) {
+      var idArr = sec.ids[ii];
+      var val = '';
+      for (var j = 0; j < idArr.length; j++) val += (j?'/':'') + (sub.answers[idArr[j]]||'');
+      val = val.replace(/\/+$/,'').trim() || '';
+      // Check correct
+      var isOk = false;
+      if (idArr.length > 1) {
+        // split key
+        var akEntry = null;
+        var akKeys = Object.keys(AK);
+        for (var ki = 0; ki < akKeys.length; ki++) {
+          var ak = AK[akKeys[ki]];
+          if (ak.split) {
+            var match = true;
+            for (var si2 = 0; si2 < idArr.length; si2++) if (ak.split.indexOf(idArr[si2]) === -1) { match=false; break; }
+            if (match) { akEntry = ak; break; }
+          }
+        }
+        if (akEntry) {
+          isOk = true;
+          for (var j = 0; j < idArr.length; j++) {
+            var v = norm(sub.answers[idArr[j]]||'');
+            var found = false;
+            for (var oi = 0; oi < akEntry.ok[j].length; oi++) if (norm(akEntry.ok[j][oi])===v){found=true;break;}
+            if (!found) { isOk=false; break; }
+          }
+        }
+      } else {
+        var ak = AK[idArr[0]];
+        if (ak) { var v=norm(sub.answers[idArr[0]]||''); for(var oi=0;oi<ak.ok.length;oi++)if(norm(ak.ok[oi])===v){isOk=true;break;} }
+      }
+      var corrStr = idArr.map(function(id){return CORR[id]||'';}).join(' / ');
+      var disp = val || '(en blanco)';
+      rows += '<div class="res-item '+(isOk?'ok':'err')+'">' +
+        '<span class="ri-n">'+(ii+1)+'.</span>' +
+        '<span class="ri-ans"><strong>'+disp+'</strong>' +
+        (!isOk ? ' <span class="ri-correct">→ '+corrStr+'</span>' : '') + '</span>' +
+        '<span class="ri-icon">'+(isOk?'✓':'✗')+'</span></div>';
+    }
+    html += '<div class="res-section"><div class="res-sec-hdr"><h3>'+sec.t+'</h3><span class="res-sec-pts '+cls+'">'+fmt(sc)+' / '+sec.max+' pts</span></div><div class="res-items">'+rows+'</div></div>';
+  }
+
+  // MCQ
+  var mcqSc = sub.scores.rmcq || 0;
+  var mcqCls = mcqSc/14>=0.8?'hi':mcqSc/14<0.5?'lo':'';
+  var mcqRows = '';
+  var mkeys = ['r1','r2_1','r2_2','r2_3','r2_4','r2_5','r2_6'];
+  for (var i = 0; i < mkeys.length; i++) {
+    var k = mkeys[i]; var a = sub.answers['mcq_'+k];
+    var ok = (a!==null && a!==undefined && a===MCQ_OK[k]);
+    var lbl = (i===0?'Q1':'Q2.'+i);
+    var sel = (a!==null && a!==undefined) ? (['A','B','C'][a]+' – '+MCQ_TEXT[k][a]) : '(en blanco)';
+    var cor = ['A','B','C'][MCQ_OK[k]]+' – '+MCQ_TEXT[k][MCQ_OK[k]];
+    mcqRows += '<div class="res-item '+(ok?'ok':'err')+'">' +
+      '<span class="ri-n">'+lbl+'</span>' +
+      '<span class="ri-ans"><strong>'+sel+'</strong>'+(!ok?' <span class="ri-correct">→ '+cor+'</span>':'')+
+      '</span><span class="ri-icon">'+(ok?'✓':'✗')+'</span></div>';
+  }
+  html += '<div class="res-section"><div class="res-sec-hdr"><h3>Reading – Comprensión (Q1+Q2)</h3><span class="res-sec-pts '+mcqCls+'">'+fmt(mcqSc)+' / 14 pts</span></div><div class="res-items">'+mcqRows+'</div></div>';
+
+  // T/F
+  var tfSc = sub.scores.rtf || 0;
+  var tfCls = tfSc/6>=0.8?'hi':tfSc/6<0.5?'lo':'';
+  var tfRows = '';
+  var tfData = [
+    {id:'tf1',ans:'T',txt:'Postal companies lose money...'},
+    {id:'tf2',ans:'F',txt:'Laurence had the idea during the competition...'},
+    {id:'tf3',ans:'F',txt:'He decided to save ALL the money...'}
+  ];
+  for (var i = 0; i < tfData.length; i++) {
+    var q = tfData[i]; var v = sub.answers[q.id] || '—';
+    var ok = (v === q.ans); var cor = q.ans==='T'?'TRUE':'FALSE';
+    tfRows += '<div class="res-item '+(ok?'ok':'err')+'">' +
+      '<span class="ri-n">'+(i+1)+'.</span>' +
+      '<span class="ri-ans"><strong>'+v+'</strong>'+(!ok?' <span class="ri-correct">→ '+cor+'</span>':'')+
+      '</span><span class="ri-icon">'+(ok?'✓':'✗')+'</span></div>';
+  }
+  html += '<div class="res-section"><div class="res-sec-hdr"><h3>Reading – True / False</h3><span class="res-sec-pts '+tfCls+'">'+fmt(tfSc)+' / 6 pts</span></div><div class="res-items">'+tfRows+'</div></div>';
+
+  // Order
+  var ordSc = sub.scores.rord || 0;
+  var ordCls = ordSc/5>=0.8?'hi':ordSc/5<0.5?'lo':'';
+  var ordRows = '';
+  var ols = ['A','B','C','D','E'];
+  for (var i = 0; i < ols.length; i++) {
+    var l = ols[i]; var v = sub.answers['ord_'+l] || '—';
+    var ok = (parseInt(v) === ORD_ANS['ord_'+l]);
+    ordRows += '<div class="res-item '+(ok?'ok':'err')+'">' +
+      '<span class="ri-n">'+l+'.</span>' +
+      '<span class="ri-ans"><strong>'+v+'</strong>'+(!ok?' <span class="ri-correct">→ '+ORD_ANS['ord_'+l]+'</span>':'')+
+      '</span><span class="ri-icon">'+(ok?'✓':'✗')+'</span></div>';
+  }
+  html += '<div class="res-section"><div class="res-sec-hdr"><h3>Reading – Orden (1–5)</h3><span class="res-sec-pts '+ordCls+'">'+fmt(ordSc)+' / 5 pts</span></div><div class="res-items">'+ordRows+'</div></div>';
+  document.getElementById('res-sections-container').innerHTML = html;
+  showView('view-results');
+}
+
+
+// ═══ TEACHER PANEL ═══
+var TEACHER_PASS = 'valle2025';
+
+function loginTeacher() {
+  var pass = document.getElementById('teacher-pass').value;
+  var err  = document.getElementById('teacher-err');
+  if (pass !== TEACHER_PASS) {
+    err.textContent = 'Contraseña incorrecta.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  showView('view-teacher');
+  loadTeacherData();
+}
+
+function loadTeacherData() {
+  document.getElementById('teacher-subtitle').textContent = 'Cargando...';
+  document.getElementById('teacher-table').innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-l);font-size:.88rem;">Cargando datos...</div>';
+
+  var url = SHEETS_URL + '?getall=1&t=' + Date.now();
+  var img_fallback = setTimeout(function() {
+    document.getElementById('teacher-subtitle').textContent = 'Error al cargar datos.';
+  }, 8000);
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      clearTimeout(img_fallback);
+      renderTeacherTable(data.rows || []);
+    })
+    .catch(function() {
+      clearTimeout(img_fallback);
+      document.getElementById('teacher-subtitle').textContent = 'Error de conexión.';
+      document.getElementById('teacher-table').innerHTML = '<div style="padding:24px;text-align:center;color:var(--red);font-size:.88rem;">No se pudieron cargar los datos. Comprueba la conexión.</div>';
+    });
+}
+
+function renderTeacherTable(rows) {
+  var total = rows.length;
+  if (total === 0) {
+    document.getElementById('teacher-subtitle').textContent = 'Sin resultados aún.';
+    document.getElementById('teacher-table').innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-l);font-size:.88rem;">Todavía no hay ningún alumno que haya entregado el examen.</div>';
+    document.getElementById('teacher-stats').innerHTML = '';
+    return;
+  }
+
+  var aprobados = rows.filter(function(r){ return r[6] !== 'Insuficiente'; }).length;
+  var totalPts  = rows.reduce(function(s,r){ return s + (parseFloat(r[2])||0); }, 0);
+  var media     = (totalPts / total).toFixed(1);
+  var notas     = {Sobresaliente:0, Notable:0, Aprobado:0, Insuficiente:0};
+  rows.forEach(function(r){ if (notas[r[6]] !== undefined) notas[r[6]]++; });
+
+  // Stats cards
+  var statsColors = ['var(--green)','var(--mauve)','var(--navy-l)','var(--red)'];
+  var statsData = [
+    {l:'Total alumnos', v:total},
+    {l:'Media puntos', v:media+'/75'},
+    {l:'Aprobados', v:aprobados+' ('+Math.round(aprobados/total*100)+'%)'},
+    {l:'Insuficientes', v:notas.Insuficiente}
+  ];
+  document.getElementById('teacher-stats').innerHTML = statsData.map(function(s,i){
+    return '<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;">' +
+      '<div style="font-family:serif;font-size:1.6rem;color:'+statsColors[i]+';">'+s.v+'</div>' +
+      '<div style="font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-l);margin-top:4px;">'+s.l+'</div>' +
+      '</div>';
+  }).join('');
+
+  document.getElementById('teacher-subtitle').textContent = total + ' alumno' + (total!==1?'s':'') + ' · Media: ' + media + '/75';
+
+  // Table
+  var gradeColor = {Sobresaliente:'var(--green)',Notable:'#5c8a3c',Aprobado:'var(--amber)',Insuficiente:'var(--red)'};
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:.84rem;">';
+  html += '<thead><tr style="background:#f5ede0;">';
+  ['Código','Fecha','Total','Gramática','Vocabulario','Reading','Nota'].forEach(function(h){
+    html += '<th style="padding:10px 14px;text-align:left;font-size:.67rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-l);border-bottom:1px solid var(--border);">'+h+'</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(function(r, i) {
+    var bg = i%2===0 ? 'var(--white)' : '#faf5ee';
+    var nota = r[6] || '';
+    var color = gradeColor[nota] || 'var(--text)';
+    html += '<tr style="background:'+bg+';">';
+    html += '<td style="padding:10px 14px;font-weight:600;color:var(--navy);border-bottom:1px solid var(--border);">'+( r[1]||'')+'</td>';
+    html += '<td style="padding:10px 14px;color:var(--text-l);border-bottom:1px solid var(--border);">'+(r[0]||'')+'</td>';
+    html += '<td style="padding:10px 14px;font-family:serif;font-size:1rem;font-weight:700;color:var(--navy);border-bottom:1px solid var(--border);">'+(r[2]||0)+'/75</td>';
+    html += '<td style="padding:10px 14px;border-bottom:1px solid var(--border);">'+(r[3]||0)+'/30</td>';
+    html += '<td style="padding:10px 14px;border-bottom:1px solid var(--border);">'+(r[4]||0)+'/20</td>';
+    html += '<td style="padding:10px 14px;border-bottom:1px solid var(--border);">'+(r[5]||0)+'/25</td>';
+    html += '<td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:'+color+'22;color:'+color+';padding:3px 10px;border-radius:12px;font-size:.76rem;font-weight:700;">'+nota+'</span></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('teacher-table').innerHTML = html;
+}
+
+</script>
+
+<!-- ══════════════ TEACHER LOGIN ══════════════ -->
+<div id="view-teacher-login" class="view" style="background:linear-gradient(160deg,#f0e8dc 0%,#e8d8c4 50%,#ddc8a8 100%);align-items:center;justify-content:center;padding:24px;">
+  <div class="login-card">
+    <div class="login-top">
+      <div class="school">IES Valle Verde</div>
+      <div class="exam-sub">Acceso · Profesora</div>
+    </div>
+    <div class="login-body">
+      <div class="fg"><label>Contraseña</label><input type="password" id="teacher-pass" placeholder="Contraseña de profesora" autocomplete="off"></div>
+      <div class="err-msg" id="teacher-err"></div>
+      <button class="login-btn" onclick="loginTeacher()">Entrar al panel →</button>
+      <div style="text-align:center;margin-top:14px"><button onclick="showView('view-login')" style="background:none;border:none;color:var(--text-l);font-size:.75rem;cursor:pointer;text-decoration:underline">← Volver al examen</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TEACHER DASHBOARD ══════════════ -->
+<div id="view-teacher" class="view" style="background:var(--cream);">
+  <div class="exam-topbar">
+    <div class="topbar-left">
+      <h1>Panel de Profesora · IES Valle Verde</h1>
+      <div class="meta" id="teacher-subtitle">Cargando resultados...</div>
+    </div>
+    <div class="topbar-right">
+      <button class="exit-btn" onclick="showView('view-login')">Salir</button>
+    </div>
+  </div>
+  <div style="max-width:900px;margin:0 auto;padding:28px 20px 60px;">
+    <!-- Stats bar -->
+    <div id="teacher-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;"></div>
+    <!-- Table -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="padding:16px 20px;background:#f5ede0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-l);">Resultados alumnos</span>
+        <button onclick="loadTeacherData()" style="background:var(--navy);color:#f5ede0;border:none;padding:6px 16px;border-radius:6px;font-size:.78rem;cursor:pointer;">↻ Actualizar</button>
+      </div>
+      <div id="teacher-table" style="overflow-x:auto;"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
